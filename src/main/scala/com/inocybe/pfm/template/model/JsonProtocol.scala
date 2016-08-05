@@ -5,6 +5,6 @@ import spray.json.DefaultJsonProtocol
 
 trait JsonProtocol extends SprayJsonSupport with DefaultJsonProtocol {
 
-  implicit val simpleObjectFormat = jsonFormat2(SimpleObject)
+  implicit val simpleObjectFormat = jsonFormat2(Work)
 
 }

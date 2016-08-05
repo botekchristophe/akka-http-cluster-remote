@@ -1,7 +1,7 @@
 package com.inocybe.pfm.template.apis
 
 import akka.http.scaladsl.server.Directives
-import com.inocybe.pfm.template.model.SimpleObject
+import com.inocybe.pfm.template.model.Work
 import com.inocybe.pfm.template.model.JsonProtocol
 
 object SampleService extends Directives with JsonProtocol {
@@ -12,14 +12,14 @@ object SampleService extends Directives with JsonProtocol {
   def getHello =
     path("hello") {
       get {
-        complete(SimpleObject("someString", 123456))
+        complete(Work("someString", 123456))
       }
     }
 
   def postHello = {
     path("hello") {
       post {
-        entity(as[SimpleObject]) { obj =>
+        entity(as[Work]) { obj =>
           complete(obj)
         }
       }
