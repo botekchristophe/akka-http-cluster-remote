@@ -33,7 +33,10 @@ object Boot {
 
     val log = Logging(system, this)
 
-    val route = InboundConnector.routes
+    startBackend(2551, "backend")
+    startWorker(2550)
+
+    val route = new InboundConnector(system).route
     val interface = "0.0.0.0"
     val port = 8080
 

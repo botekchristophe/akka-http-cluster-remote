@@ -1,18 +1,32 @@
 package com.inocybe.pfm.template.apis
 
-import akka.http.scaladsl.server.Directives
-import com.inocybe.pfm.template.model.Work
-import com.inocybe.pfm.template.model.JsonProtocol
+import java.util.UUID
 
-object SampleService extends Directives with JsonProtocol {
+import akka.actor.ActorSystem
+import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySettings}
+import akka.http.scaladsl.marshalling.ToResponseMarshallable
+import akka.http.scaladsl.server.{Directives, Route}
+import akka.pattern.ask
+import com.inocybe.pfm.template.model.{JsonProtocol, Work}
+
+import scala.concurrent.Future
+import scala.util.Random
+
+class SampleService(system: ActorSystem) extends Directives with JsonProtocol {
 
   def route = pathPrefix("sample") { getHello ~ postHello }
 
+  val masterProxy = system.actorOf(
+    ClusterSingletonProxy.props(
+      settings = ClusterSingletonProxySettings(system).withRole("backend"),
+      singletonManagerPath = "/user/master"
+    ),
+    name = "masterProxy")
 
   def getHello =
     path("hello") {
       get {
-        complete(Work("someString", 123456))
+        complete(Work(UUID.randomUUID.toString, Random.nextInt()))
       }
     }
 
@@ -20,10 +34,16 @@ object SampleService extends Directives with JsonProtocol {
     path("hello") {
       post {
         entity(as[Work]) { obj =>
-          complete(obj)
+          complete(masterProxy ? obj)
         }
       }
     }
   }
+
+  def complete(resource: Future[Any]): Route =
+    onSuccess(resource) {
+      case t => complete(ToResponseMarshallable(t))
+      case None => complete(404, None)
+    }
 
 }
