@@ -5,5 +5,5 @@ import akka.http.scaladsl.server.Directives
 
 class InboundConnector(system: ActorSystem) extends Directives {
   val services = Seq(new SampleService(system))
-  def route = services.reduce(_.route ~ _.route)
+  def route = services.head.route
 }

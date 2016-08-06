@@ -7,14 +7,21 @@ import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySetti
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.server.{Directives, Route}
 import akka.pattern.ask
+import akka.util.Timeout
 import com.inocybe.pfm.template.model.{JsonProtocol, Work}
 
 import scala.concurrent.Future
+import scala.concurrent.duration._
 import scala.util.Random
 
 class SampleService(system: ActorSystem) extends Directives with JsonProtocol {
 
   def route = pathPrefix("sample") { getHello ~ postHello }
+
+  val context = system.dispatcher
+
+  implicit val timeout = Timeout(5.seconds)
+
 
   val masterProxy = system.actorOf(
     ClusterSingletonProxy.props(
