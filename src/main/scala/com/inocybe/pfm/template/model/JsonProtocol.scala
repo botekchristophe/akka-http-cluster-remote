@@ -3,8 +3,9 @@ package com.inocybe.pfm.template.model
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.DefaultJsonProtocol
 
-trait JsonProtocol extends SprayJsonSupport with DefaultJsonProtocol {
+object JsonProtocol extends SprayJsonSupport with DefaultJsonProtocol {
 
-  implicit val simpleObjectFormat = jsonFormat2(Work)
+  implicit val workFormat = jsonFormat2(Work)
+  implicit val workResultFormat = jsonFormat2(WorkResult)
 
 }
