@@ -27,7 +27,7 @@ object Boot {
       def genString(o: AnyRef): String = o.getClass.getName
       override def getClazz(o: AnyRef): Class[_] = o.getClass
     }
-    implicit val system = ActorSystem("my-microservice")
+    implicit val system = ActorSystem("ClusterSystem")
     implicit val materializer = ActorMaterializer()
     implicit val executionContext = system.dispatcher
 
